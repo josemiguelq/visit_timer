@@ -79,4 +79,3 @@ class VisitTimer {
     return jsonList.map((json) => VisitTimer.fromJson(json)).toList();
   }
 }
-

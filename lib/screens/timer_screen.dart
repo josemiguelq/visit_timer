@@ -59,7 +59,7 @@ class _TimerScreenState extends State<TimerScreen>
     });
   }
 
-  Future<void> _finishTimer() async {
+  Future<void> _finishTimer({bool playAudio = true}) async {
     _timer?.cancel();
 
     setState(() {
@@ -77,8 +77,15 @@ class _TimerScreenState extends State<TimerScreen>
 
     await StorageService.addTimer(visitTimer);
 
-    // Tocar áudio
-    await AudioService.playAlarm();
+    // Tocar áudio apenas se não foi encerrado manualmente
+    if (playAudio) {
+      await AudioService.playAlarm();
+    }
+  }
+
+  Future<void> _endEarly() async {
+    await _finishTimer(playAudio: false);
+    _goHome();
   }
 
   void _goHome() {
@@ -283,62 +290,109 @@ class _TimerScreenState extends State<TimerScreen>
                     ),
                   ),
                 const Spacer(),
-                // Botão de ação
+                // Botões de ação
                 Padding(
-                  padding: const EdgeInsets.all(24),
-                  child: GestureDetector(
-                    onTap: _isFinished ? _goHome : null,
-                    child: Container(
-                      width: double.infinity,
-                      height: 60,
-                      decoration: BoxDecoration(
-                        gradient:
-                            _isFinished
-                                ? const LinearGradient(
-                                  colors: [
-                                    Color(0xFFE94560),
-                                    Color(0xFFFF6B6B),
-                                  ],
-                                )
-                                : null,
-                        color:
-                            _isFinished
-                                ? null
-                                : Colors.white.withValues(alpha: 0.1),
-                        borderRadius: BorderRadius.circular(16),
-                        boxShadow:
-                            _isFinished
-                                ? [
-                                  BoxShadow(
-                                    color: const Color(
-                                      0xFFE94560,
-                                    ).withValues(alpha: 0.4),
-                                    blurRadius: 20,
-                                    offset: const Offset(0, 8),
-                                  ),
-                                ]
-                                : null,
-                      ),
-                      child: Center(
-                        child: Text(
-                          _isFinished
-                              ? 'Voltar ao Início'
-                              : 'Timer em andamento...',
-                          style: TextStyle(
-                            fontSize: 18,
-                            fontWeight: FontWeight.bold,
+                  padding: const EdgeInsets.symmetric(horizontal: 24),
+                  child: Column(
+                    children: [
+                      // Botão principal
+                      GestureDetector(
+                        onTap: _isFinished ? _goHome : null,
+                        child: Container(
+                          width: double.infinity,
+                          height: 60,
+                          decoration: BoxDecoration(
+                            gradient:
+                                _isFinished
+                                    ? const LinearGradient(
+                                      colors: [
+                                        Color(0xFFE94560),
+                                        Color(0xFFFF6B6B),
+                                      ],
+                                    )
+                                    : null,
                             color:
                                 _isFinished
-                                    ? Colors.white
-                                    : Colors.white.withValues(alpha: 0.5),
-                            letterSpacing: 1,
+                                    ? null
+                                    : Colors.white.withValues(alpha: 0.1),
+                            borderRadius: BorderRadius.circular(16),
+                            boxShadow:
+                                _isFinished
+                                    ? [
+                                      BoxShadow(
+                                        color: const Color(
+                                          0xFFE94560,
+                                        ).withValues(alpha: 0.4),
+                                        blurRadius: 20,
+                                        offset: const Offset(0, 8),
+                                      ),
+                                    ]
+                                    : null,
+                          ),
+                          child: Center(
+                            child: Text(
+                              _isFinished
+                                  ? 'Voltar ao Início'
+                                  : 'Timer em andamento...',
+                              style: TextStyle(
+                                fontSize: 18,
+                                fontWeight: FontWeight.bold,
+                                color:
+                                    _isFinished
+                                        ? Colors.white
+                                        : Colors.white.withValues(alpha: 0.5),
+                                letterSpacing: 1,
+                              ),
+                            ),
                           ),
                         ),
                       ),
-                    ),
+                      // Botão para encerrar antes
+                      if (!_isFinished) ...[
+                        const SizedBox(height: 16),
+                        GestureDetector(
+                          onTap: _endEarly,
+                          child: Container(
+                            width: double.infinity,
+                            height: 50,
+                            decoration: BoxDecoration(
+                              color: Colors.transparent,
+                              borderRadius: BorderRadius.circular(16),
+                              border: Border.all(
+                                color: const Color(
+                                  0xFFFFE66D,
+                                ).withValues(alpha: 0.5),
+                                width: 1.5,
+                              ),
+                            ),
+                            child: Center(
+                              child: Row(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  Icon(
+                                    Icons.directions_run,
+                                    color: const Color(0xFFFFE66D),
+                                    size: 20,
+                                  ),
+                                  const SizedBox(width: 8),
+                                  Text(
+                                    'Ufa, foi embora antes!',
+                                    style: TextStyle(
+                                      fontSize: 16,
+                                      fontWeight: FontWeight.w600,
+                                      color: const Color(0xFFFFE66D),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ],
                   ),
                 ),
-                const SizedBox(height: 20),
+                const SizedBox(height: 40),
               ],
             ),
           ),

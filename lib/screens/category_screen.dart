@@ -34,26 +34,30 @@ class _CategoryScreenState extends State<CategoryScreen> {
           content: const Text('Selecione uma categoria'),
           backgroundColor: const Color(0xFFE94560),
           behavior: SnackBarBehavior.floating,
-          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(10),
+          ),
         ),
       );
       return;
     }
 
-    final name = _nameController.text.trim().isEmpty 
-        ? 'Visitante' 
-        : _nameController.text.trim();
-    
+    final name =
+        _nameController.text.trim().isEmpty
+            ? 'Visitante'
+            : _nameController.text.trim();
+
     final durationSeconds = _generateRandomDuration(_selectedCategory!);
 
     Navigator.pushReplacement(
       context,
       MaterialPageRoute(
-        builder: (context) => TimerScreen(
-          category: _selectedCategory!,
-          name: name,
-          durationSeconds: durationSeconds,
-        ),
+        builder:
+            (context) => TimerScreen(
+              category: _selectedCategory!,
+              name: name,
+              durationSeconds: durationSeconds,
+            ),
       ),
     );
   }
@@ -66,11 +70,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
           gradient: LinearGradient(
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
-            colors: [
-              Color(0xFF1A1A2E),
-              Color(0xFF16213E),
-              Color(0xFF0F3460),
-            ],
+            colors: [Color(0xFF1A1A2E), Color(0xFF16213E), Color(0xFF0F3460)],
           ),
         ),
         child: SafeArea(
@@ -148,8 +148,8 @@ class _CategoryScreenState extends State<CategoryScreen> {
                       ),
                       const SizedBox(height: 30),
                       // Grid de categorias
-                      ...VisitCategory.values.map((category) => 
-                        _buildCategoryCard(category)
+                      ...VisitCategory.values.map(
+                        (category) => _buildCategoryCard(category),
                       ),
                       const SizedBox(height: 40),
                     ],
@@ -166,20 +166,27 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     height: 60,
                     decoration: BoxDecoration(
                       gradient: LinearGradient(
-                        colors: _selectedCategory != null
-                            ? [const Color(0xFFE94560), const Color(0xFFFF6B6B)]
-                            : [Colors.grey.shade700, Colors.grey.shade600],
+                        colors:
+                            _selectedCategory != null
+                                ? [
+                                  const Color(0xFFE94560),
+                                  const Color(0xFFFF6B6B),
+                                ]
+                                : [Colors.grey.shade700, Colors.grey.shade600],
                       ),
                       borderRadius: BorderRadius.circular(16),
-                      boxShadow: _selectedCategory != null
-                          ? [
-                              BoxShadow(
-                                color: const Color(0xFFE94560).withValues(alpha: 0.4),
-                                blurRadius: 20,
-                                offset: const Offset(0, 8),
-                              ),
-                            ]
-                          : null,
+                      boxShadow:
+                          _selectedCategory != null
+                              ? [
+                                BoxShadow(
+                                  color: const Color(
+                                    0xFFE94560,
+                                  ).withValues(alpha: 0.4),
+                                  blurRadius: 20,
+                                  offset: const Offset(0, 8),
+                                ),
+                              ]
+                              : null,
                     ),
                     child: const Center(
                       child: Text(
@@ -204,7 +211,7 @@ class _CategoryScreenState extends State<CategoryScreen> {
 
   Widget _buildCategoryCard(VisitCategory category) {
     final isSelected = _selectedCategory == category;
-    
+
     return GestureDetector(
       onTap: () {
         setState(() {
@@ -215,14 +222,16 @@ class _CategoryScreenState extends State<CategoryScreen> {
         margin: const EdgeInsets.only(bottom: 12),
         padding: const EdgeInsets.all(20),
         decoration: BoxDecoration(
-          color: isSelected
-              ? _getCategoryColor(category).withValues(alpha: 0.2)
-              : Colors.white.withValues(alpha: 0.05),
+          color:
+              isSelected
+                  ? _getCategoryColor(category).withValues(alpha: 0.2)
+                  : Colors.white.withValues(alpha: 0.05),
           borderRadius: BorderRadius.circular(16),
           border: Border.all(
-            color: isSelected
-                ? _getCategoryColor(category)
-                : Colors.white.withValues(alpha: 0.1),
+            color:
+                isSelected
+                    ? _getCategoryColor(category)
+                    : Colors.white.withValues(alpha: 0.1),
             width: isSelected ? 2 : 1,
           ),
         ),
@@ -251,9 +260,10 @@ class _CategoryScreenState extends State<CategoryScreen> {
                     style: TextStyle(
                       fontSize: 18,
                       fontWeight: FontWeight.w600,
-                      color: isSelected 
-                          ? _getCategoryColor(category) 
-                          : Colors.white,
+                      color:
+                          isSelected
+                              ? _getCategoryColor(category)
+                              : Colors.white,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -317,4 +327,3 @@ class _CategoryScreenState extends State<CategoryScreen> {
     return '${category.minMinutes} - ${category.maxMinutes} min';
   }
 }
-

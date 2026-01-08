@@ -11,33 +11,47 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> {
+class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   List<VisitTimer> _timers = [];
   bool _isLoading = true;
 
   @override
   void initState() {
     super.initState();
+    WidgetsBinding.instance.addObserver(this);
     _loadTimers();
+  }
+
+  @override
+  void dispose() {
+    WidgetsBinding.instance.removeObserver(this);
+    super.dispose();
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.resumed) {
+      _loadTimers();
+    }
   }
 
   Future<void> _loadTimers() async {
     final timers = await StorageService.loadTimers();
-    setState(() {
-      _timers = timers;
-      _isLoading = false;
-    });
+    if (mounted) {
+      setState(() {
+        _timers = timers;
+        _isLoading = false;
+      });
+    }
   }
 
   void _openCategoryScreen() async {
-    final result = await Navigator.push<bool>(
+    await Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const CategoryScreen()),
     );
-
-    if (result == true) {
-      _loadTimers();
-    }
+    // Sempre recarrega ao voltar, independente do resultado
+    _loadTimers();
   }
 
   String _formatDate(DateTime date) {
@@ -61,7 +75,7 @@ class _HomeScreenState extends State<HomeScreen> {
               const SizedBox(height: 40),
               // Título
               Text(
-                'Visit Timer',
+                'Timer de visita',
                 style: TextStyle(
                   fontSize: 32,
                   fontWeight: FontWeight.bold,
