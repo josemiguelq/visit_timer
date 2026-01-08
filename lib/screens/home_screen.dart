@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
+import '../main.dart';
 import '../models/visit_timer.dart';
 import '../services/storage_service.dart';
 import 'category_screen.dart';
@@ -11,7 +12,8 @@ class HomeScreen extends StatefulWidget {
   State<HomeScreen> createState() => _HomeScreenState();
 }
 
-class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
+class _HomeScreenState extends State<HomeScreen>
+    with WidgetsBindingObserver, RouteAware {
   List<VisitTimer> _timers = [];
   bool _isLoading = true;
 
@@ -23,9 +25,23 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
   }
 
   @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    // Registra para receber notificações de navegação
+    routeObserver.subscribe(this, ModalRoute.of(context)!);
+  }
+
+  @override
   void dispose() {
+    routeObserver.unsubscribe(this);
     WidgetsBinding.instance.removeObserver(this);
     super.dispose();
+  }
+
+  // Chamado quando a tela volta a ser visível (após pop de outra tela)
+  @override
+  void didPopNext() {
+    _loadTimers();
   }
 
   @override
@@ -45,13 +61,11 @@ class _HomeScreenState extends State<HomeScreen> with WidgetsBindingObserver {
     }
   }
 
-  void _openCategoryScreen() async {
-    await Navigator.push(
+  void _openCategoryScreen() {
+    Navigator.push(
       context,
       MaterialPageRoute(builder: (context) => const CategoryScreen()),
     );
-    // Sempre recarrega ao voltar, independente do resultado
-    _loadTimers();
   }
 
   String _formatDate(DateTime date) {
