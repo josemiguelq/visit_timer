@@ -14,6 +14,12 @@ Ou aquele conhecido que aparece "de passagem" e você já perdeu 2 episódios da
 
 O **Timer de Visita** é o app que você não sabia que precisava, mas agora não vai viver sem.
 
+
+
+https://github.com/user-attachments/assets/09523301-da54-4975-8f64-35575a8c7347
+
+
+
 ### Como funciona:
 
 1. 🚪 Visita chegou? Abra o app
